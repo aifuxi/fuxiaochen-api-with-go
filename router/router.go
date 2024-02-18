@@ -1,14 +1,19 @@
 package router
 
-import "github.com/gin-gonic/gin"
+import (
+    "fuxiaochen-api-with-go/controller"
+    "github.com/gin-gonic/gin"
+)
 
 func NewRouter() *gin.Engine {
-	r := gin.Default()
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
+    r := gin.Default()
+    adminAPIV1 := r.Group("/admin-api/v1")
 
-	return r
+    adminUserRouter := adminAPIV1.Group("/users")
+    {
+        adminUserRouter.GET("/", controller.GetUsers)
+        adminUserRouter.POST("/", controller.CreatUser)
+    }
+
+    return r
 }
