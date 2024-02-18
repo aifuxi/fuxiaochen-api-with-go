@@ -13,7 +13,7 @@ func main() {
 		log.Fatalf("数据库连接失败: %v\n", err)
 	}
 
-	err = initialization.DB.AutoMigrate(&model.User{})
+	err = initialization.DB.AutoMigrate(&model.User{}, &model.Tag{})
 	if err != nil {
 		log.Fatalf("迁移表结构失败: %v\n", err)
 	}
