@@ -1,4 +1,4 @@
-.PHONY: build run db_run db_create
+.PHONY: build run db_run db_create migration
 
 # 应用名称
 APP_NAME="fuxiaochen-api-with-go"
@@ -23,3 +23,7 @@ db_run:
 # 在启动好的 Docker 容器中创建数据库
 db_create:
 	docker exec -it ${MYSQL_CONTAINER_NAME} mysql -uroot -p${MYSQL_ROOT_PASSWORD} -e "CREATE DATABASE ${MYSQL_DB_NAME};"
+
+# 迁移数据表
+migration:
+	go run ./cmd/migration.go
