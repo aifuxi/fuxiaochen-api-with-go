@@ -2,13 +2,14 @@ package main
 
 import (
 	"fuxiaochen-api-with-go/global"
+	"fuxiaochen-api-with-go/initialize"
 	"fuxiaochen-api-with-go/model"
 	"log"
 )
 
 func main() {
 
-	err := global.SetupDB()
+	err := initialize.SetupDB()
 	if err != nil {
 		log.Fatalf("数据库连接失败: %v\n", err)
 	}

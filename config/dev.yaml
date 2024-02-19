@@ -1,0 +1,15 @@
+app:
+  host: "127.0.0.1"
+  port: 6122
+
+mysql:
+  host: "127.0.0.1"
+  username: "root"
+  password: "123456"
+  port: 3306
+  db_name: "fuxiaochen"
+
+jwt:
+  secret: "jwt_secret"
+  # token 过期时间 单位: 小时
+  expire_duration: 1
