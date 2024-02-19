@@ -24,4 +24,5 @@ go.work
 .idea
 tmp
 
-/config/prod.yaml
+config/prod.yaml
+log/*.log

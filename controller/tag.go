@@ -10,7 +10,7 @@ import (
 func GetTags(c *gin.Context) {
 	tags, err := logic.GetTags()
 	if err != nil {
-		ResponseErrorWithMsg(c, CodeInternalServerError, err)
+		ResponseErrorWithErr(c, CodeInternalServerError, err)
 		return
 	}
 
@@ -27,7 +27,7 @@ func CreatTag(c *gin.Context) {
 
 	tag, err := logic.CreateTag(params)
 	if err != nil {
-		ResponseErrorWithMsg(c, CodeInternalServerError, err)
+		ResponseErrorWithErr(c, CodeInternalServerError, err)
 		return
 	}
 
@@ -51,7 +51,7 @@ func UpdateTag(c *gin.Context) {
 
 	tag, err := logic.UpdateTagByID(id, params)
 	if err != nil {
-		ResponseErrorWithMsg(c, CodeInternalServerError, err)
+		ResponseErrorWithErr(c, CodeInternalServerError, err)
 		return
 	}
 
@@ -69,7 +69,7 @@ func GetTag(c *gin.Context) {
 
 	tag, err := logic.GetTagByID(id)
 	if err != nil {
-		ResponseErrorWithMsg(c, CodeInternalServerError, err)
+		ResponseErrorWithErr(c, CodeInternalServerError, err)
 		return
 	}
 
@@ -87,7 +87,7 @@ func DeleteTag(c *gin.Context) {
 
 	tag, err := logic.DeleteTagByID(id)
 	if err != nil {
-		ResponseErrorWithMsg(c, CodeInternalServerError, err)
+		ResponseErrorWithErr(c, CodeInternalServerError, err)
 		return
 	}
 

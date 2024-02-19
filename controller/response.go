@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fuxiaochen-api-with-go/global"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -25,12 +26,16 @@ func ResponseError(c *gin.Context, code ResponseCode) {
 		Msg:  code.GetMsg(),
 		Data: nil,
 	})
+
+	global.L.Error(code.GetMsg())
 }
 
-func ResponseErrorWithMsg(c *gin.Context, code ResponseCode, msg any) {
+func ResponseErrorWithErr(c *gin.Context, code ResponseCode, err error) {
 	c.JSON(http.StatusOK, ResponseStruct{
 		Code: code,
-		Msg:  msg,
+		Msg:  err.Error(),
 		Data: nil,
 	})
+
+	global.L.Error(err)
 }

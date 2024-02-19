@@ -10,7 +10,7 @@ import (
 func GetUsers(c *gin.Context) {
 	users, err := logic.GetUsers()
 	if err != nil {
-		ResponseErrorWithMsg(c, CodeInternalServerError, err)
+		ResponseErrorWithErr(c, CodeInternalServerError, err)
 		return
 	}
 
@@ -27,7 +27,7 @@ func CreatUser(c *gin.Context) {
 
 	user, err := logic.CreateUser(params)
 	if err != nil {
-		ResponseErrorWithMsg(c, CodeInternalServerError, err)
+		ResponseErrorWithErr(c, CodeInternalServerError, err)
 		return
 	}
 
@@ -51,7 +51,7 @@ func UpdateUser(c *gin.Context) {
 
 	user, err := logic.UpdateUserByID(id, params)
 	if err != nil {
-		ResponseErrorWithMsg(c, CodeInternalServerError, err)
+		ResponseErrorWithErr(c, CodeInternalServerError, err)
 		return
 	}
 
@@ -69,7 +69,7 @@ func GetUser(c *gin.Context) {
 
 	user, err := logic.GetUserByID(id)
 	if err != nil {
-		ResponseErrorWithMsg(c, CodeInternalServerError, err)
+		ResponseErrorWithErr(c, CodeInternalServerError, err)
 		return
 	}
 
@@ -87,7 +87,7 @@ func DeleteUser(c *gin.Context) {
 
 	user, err := logic.DeleteUserByID(id)
 	if err != nil {
-		ResponseErrorWithMsg(c, CodeInternalServerError, err)
+		ResponseErrorWithErr(c, CodeInternalServerError, err)
 		return
 	}
 

@@ -1,6 +1,8 @@
 app:
   host: "127.0.0.1"
   port: 6122
+  # 可选值：debug release test, 和 Gin 的 mode 对齐
+  mode: "debug"
 
 mysql:
   host: "127.0.0.1"
@@ -13,3 +15,10 @@ jwt:
   secret: "jwt_secret"
   # token 过期时间 单位: 小时
   expire_duration: 1
+
+log:
+  filepath: "./log/app.log"
+  max_size: 1
+  max_backups: 5
+  max_age: 30
+  compress: false
