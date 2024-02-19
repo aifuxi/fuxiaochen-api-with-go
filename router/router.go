@@ -3,28 +3,26 @@ package router
 import (
 	"fuxiaochen-api-with-go/controller"
 	"fuxiaochen-api-with-go/global"
+	"fuxiaochen-api-with-go/middleware"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
+	"time"
 )
 
 func NewRouter() *gin.Engine {
 	r := gin.New()
 
-	// Add a ginzap middleware, which:
-	//   - Logs all requests, like a combined access and error log.
-	//   - Logs to stdout.
-	//   - RFC3339 with UTC time format.
-	r.Use(ginzap.GinzapWithConfig(global.Logger, &ginzap.Config{
-		UTC:       false,
-		SkipPaths: nil,
-	}))
+	r.Use(ginzap.Ginzap(global.Logger, time.DateTime, true))
 
-	// Logs all panic to error log
-	//   - stack means whether output the stack info.
 	r.Use(ginzap.RecoveryWithZap(global.Logger, true))
 
 	adminAPIV1 := r.Group("/admin-api/v1")
-	adminUserRouter := adminAPIV1.Group("/users")
+	authRouter := adminAPIV1.Group("/auth")
+	{
+		authRouter.POST("/login", controller.Login)
+	}
+
+	adminUserRouter := adminAPIV1.Group("/users", middleware.AuthMiddleware())
 	{
 		adminUserRouter.GET("", controller.GetUsers)
 		adminUserRouter.POST("", controller.CreatUser)
@@ -33,7 +31,7 @@ func NewRouter() *gin.Engine {
 		adminUserRouter.DELETE(":id", controller.DeleteUser)
 	}
 
-	adminTagRouter := adminAPIV1.Group("/tags")
+	adminTagRouter := adminAPIV1.Group("/tags", middleware.AuthMiddleware())
 	{
 		adminTagRouter.GET("", controller.GetTags)
 		adminTagRouter.POST("", controller.CreatTag)

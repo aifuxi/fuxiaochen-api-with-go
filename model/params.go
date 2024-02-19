@@ -11,6 +11,11 @@ type ParamsUpdateUser struct {
 	IsAdmin bool `json:"isAdmin"`
 }
 
+type ParamsLogin struct {
+	Name     string `json:"name" binding:"required"`
+	Password string `json:"password" binding:"required"`
+}
+
 type ParamsCreateTag struct {
 	Name    string   `json:"name" binding:"required"`
 	Icon    string   `json:"icon"`
