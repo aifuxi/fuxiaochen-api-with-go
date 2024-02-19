@@ -1,4 +1,4 @@
-package initialization
+package global
 
 import "github.com/bwmarrin/snowflake"
 

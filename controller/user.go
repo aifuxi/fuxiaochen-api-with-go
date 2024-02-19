@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"fuxiaochen-api-with-go/initialization"
+	"fuxiaochen-api-with-go/global"
 	"fuxiaochen-api-with-go/model"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -10,7 +10,7 @@ import (
 func GetUsers(ctx *gin.Context) {
 	var users []model.User
 
-	res := initialization.DB.Find(&users)
+	res := global.DB.Find(&users)
 	if res.Error != nil {
 		ctx.JSON(http.StatusOK, gin.H{
 			"status":  "fail",
@@ -46,7 +46,7 @@ func CreatUser(ctx *gin.Context) {
 		Name:     params.Name,
 		Password: params.Password,
 	}
-	res := initialization.DB.Create(&user)
+	res := global.DB.Create(&user)
 
 	if res.Error != nil {
 		ctx.JSON(http.StatusOK, gin.H{

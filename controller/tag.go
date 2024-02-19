@@ -2,7 +2,7 @@ package controller
 
 import (
 	"fmt"
-	"fuxiaochen-api-with-go/initialization"
+	"fuxiaochen-api-with-go/global"
 	"fuxiaochen-api-with-go/model"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -11,7 +11,7 @@ import (
 func GetTags(ctx *gin.Context) {
 	var tags []model.Tag
 
-	res := initialization.DB.Find(&tags)
+	res := global.DB.Find(&tags)
 	if res.Error != nil {
 		ctx.JSON(http.StatusOK, gin.H{
 			"status":  "fail",
@@ -30,7 +30,7 @@ func GetTag(ctx *gin.Context) {
 	id := ctx.Param("id")
 	var tag model.Tag
 
-	res := initialization.DB.First(&tag, id)
+	res := global.DB.First(&tag, id)
 	if res.Error != nil {
 		ctx.JSON(http.StatusOK, gin.H{
 			"status":  "fail",
@@ -66,7 +66,7 @@ func CreateTag(ctx *gin.Context) {
 		Icon: params.Icon,
 	}
 
-	res := initialization.DB.Create(&tag)
+	res := global.DB.Create(&tag)
 	if res.Error != nil {
 		ctx.JSON(http.StatusOK, gin.H{
 			"status":  "fail",
@@ -99,7 +99,7 @@ func UpdateTag(ctx *gin.Context) {
 		return
 	}
 
-	res := initialization.DB.First(&tag, id)
+	res := global.DB.First(&tag, id)
 	if res.Error != nil {
 		ctx.JSON(http.StatusOK, gin.H{
 			"status":  "fail",
@@ -108,7 +108,7 @@ func UpdateTag(ctx *gin.Context) {
 		return
 	}
 
-	res = initialization.DB.Model(&tag).Updates(&model.Tag{
+	res = global.DB.Model(&tag).Updates(&model.Tag{
 		Name: params.Name,
 		Icon: params.Icon,
 	})
@@ -130,7 +130,7 @@ func DeleteTag(ctx *gin.Context) {
 	id := ctx.Param("id")
 	var tag model.Tag
 
-	res := initialization.DB.First(&tag, id)
+	res := global.DB.First(&tag, id)
 	if res.Error != nil {
 		ctx.JSON(http.StatusOK, gin.H{
 			"status":  "fail",
@@ -139,7 +139,7 @@ func DeleteTag(ctx *gin.Context) {
 		return
 	}
 
-	res = initialization.DB.Delete(&model.Tag{}, id)
+	res = global.DB.Delete(&model.Tag{}, id)
 	if res.Error != nil {
 		ctx.JSON(http.StatusOK, gin.H{
 			"status":  "fail",

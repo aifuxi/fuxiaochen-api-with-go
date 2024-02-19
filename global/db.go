@@ -1,4 +1,4 @@
-package initialization
+package global
 
 import (
 	"gorm.io/driver/mysql"

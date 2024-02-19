@@ -1,19 +1,19 @@
 package main
 
 import (
-	"fuxiaochen-api-with-go/initialization"
+	"fuxiaochen-api-with-go/global"
 	"fuxiaochen-api-with-go/model"
 	"log"
 )
 
 func main() {
 
-	err := initialization.SetupDB()
+	err := global.SetupDB()
 	if err != nil {
 		log.Fatalf("数据库连接失败: %v\n", err)
 	}
 
-	err = initialization.DB.AutoMigrate(&model.User{}, &model.Tag{})
+	err = global.DB.AutoMigrate(&model.User{}, &model.Tag{})
 	if err != nil {
 		log.Fatalf("迁移表结构失败: %v\n", err)
 	}

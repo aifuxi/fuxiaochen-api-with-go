@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fuxiaochen-api-with-go/initialization"
+	"fuxiaochen-api-with-go/global"
 	"fuxiaochen-api-with-go/router"
 	"log"
 )
@@ -9,12 +9,12 @@ import (
 func main() {
 	var err error
 
-	err = initialization.SetupDB()
+	err = global.SetupDB()
 	if err != nil {
 		log.Fatalf("数据库连接失败: %v\n", err)
 	}
 
-	err = initialization.SetupSnowflakeNode()
+	err = global.SetupSnowflakeNode()
 	if err != nil {
 		log.Fatalf("初始化雪花算法节点失败: %v\n", err)
 	}
