@@ -11,8 +11,11 @@ func NewRouter() *gin.Engine {
 
 	adminUserRouter := adminAPIV1.Group("/users")
 	{
-		adminUserRouter.GET("/", controller.GetUsers)
-		adminUserRouter.POST("/", controller.CreatUser)
+		adminUserRouter.GET("", controller.GetUsers)
+		adminUserRouter.POST("", controller.CreatUser)
+		adminUserRouter.GET(":id", controller.GetUser)
+		adminUserRouter.PATCH(":id", controller.UpdateUser)
+		adminUserRouter.DELETE(":id", controller.DeleteUser)
 	}
 
 	adminTagRouter := adminAPIV1.Group("/tags")

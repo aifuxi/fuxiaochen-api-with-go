@@ -10,5 +10,5 @@ type Model struct {
 	ID        int64          `gorm:"primaryKey;comment=雪花算法生成的ID" json:"id,string"`
 	CreatedAt time.Time      `json:"createdAt"`
 	UpdatedAt time.Time      `json:"updatedAt"`
-	DeletedAt gorm.DeletedAt `gorm:"index" json:"deletedAt"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
 }

@@ -9,6 +9,7 @@ import (
 type User struct {
 	Name     string `gorm:"size:256;uniqueIndex;comment:用户名称" json:"name,omitempty"`
 	Password string `gorm:"size:256;comment:用户密码（已加密）" json:"-"`
+	IsAdmin  bool   `gorm:"comment:是否为管理员" json:"isAdmin"`
 
 	Model
 }

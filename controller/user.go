@@ -1,63 +1,95 @@
 package controller
 
 import (
-	"fuxiaochen-api-with-go/global"
+	"fuxiaochen-api-with-go/logic"
 	"fuxiaochen-api-with-go/model"
 	"github.com/gin-gonic/gin"
-	"net/http"
+	"strconv"
 )
 
-func GetUsers(ctx *gin.Context) {
-	var users []model.User
-
-	res := global.DB.Find(&users)
-	if res.Error != nil {
-		ctx.JSON(http.StatusOK, gin.H{
-			"status":  "fail",
-			"message": res.Error.Error(),
-		})
+func GetUsers(c *gin.Context) {
+	users, err := logic.GetUsers()
+	if err != nil {
+		ResponseErrorWithMsg(c, CodeInternalServerError, err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"status": "success",
-		"users":  users,
-	})
+	ResponseSuccess(c, users)
 }
 
-type createUserParams struct {
-	Name            string `json:"name" binding:"required"`
-	Password        string `json:"password" binding:"required,eqfield=ConfirmPassword,min=6"`
-	ConfirmPassword string `json:"confirmPassword" binding:"required,min=6"`
+func CreatUser(c *gin.Context) {
+	var params model.ParamsCreateUser
+
+	if err := c.ShouldBindJSON(&params); err != nil {
+		ResponseError(c, CodeIncorrectRequestParams)
+		return
+	}
+
+	user, err := logic.CreateUser(params)
+	if err != nil {
+		ResponseErrorWithMsg(c, CodeInternalServerError, err)
+		return
+	}
+
+	ResponseSuccess(c, user)
 }
 
-func CreatUser(ctx *gin.Context) {
-	var params createUserParams
+func UpdateUser(c *gin.Context) {
+	var params model.ParamsUpdateUser
+	tmp := c.Param("id")
 
-	if err := ctx.ShouldBindJSON(&params); err != nil {
-		ctx.JSON(http.StatusOK, gin.H{
-			"status":  "fail",
-			"message": err.Error(),
-		})
+	id, parseErr := strconv.ParseInt(tmp, 10, 64)
+	if parseErr != nil {
+		ResponseError(c, CodeIncorrectIDParams)
 		return
 	}
 
-	user := model.User{
-		Name:     params.Name,
-		Password: params.Password,
-	}
-	res := global.DB.Create(&user)
-
-	if res.Error != nil {
-		ctx.JSON(http.StatusOK, gin.H{
-			"status":  "fail",
-			"message": res.Error.Error(),
-		})
+	if err := c.ShouldBindJSON(&params); err != nil {
+		ResponseError(c, CodeIncorrectRequestParams)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"status": "success",
-		"user":   user,
-	})
+	user, err := logic.UpdateUserByID(id, params)
+	if err != nil {
+		ResponseErrorWithMsg(c, CodeInternalServerError, err)
+		return
+	}
+
+	ResponseSuccess(c, user)
+}
+
+func GetUser(c *gin.Context) {
+	tmp := c.Param("id")
+
+	id, parseErr := strconv.ParseInt(tmp, 10, 64)
+	if parseErr != nil {
+		ResponseError(c, CodeIncorrectIDParams)
+		return
+	}
+
+	user, err := logic.GetUserByID(id)
+	if err != nil {
+		ResponseErrorWithMsg(c, CodeInternalServerError, err)
+		return
+	}
+
+	ResponseSuccess(c, user)
+}
+
+func DeleteUser(c *gin.Context) {
+	tmp := c.Param("id")
+
+	id, parseErr := strconv.ParseInt(tmp, 10, 64)
+	if parseErr != nil {
+		ResponseError(c, CodeIncorrectIDParams)
+		return
+	}
+
+	user, err := logic.DeleteUserByID(id)
+	if err != nil {
+		ResponseErrorWithMsg(c, CodeInternalServerError, err)
+		return
+	}
+
+	ResponseSuccess(c, user)
 }
