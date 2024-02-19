@@ -40,5 +40,14 @@ func NewRouter() *gin.Engine {
 		adminTagRouter.DELETE(":id", controller.DeleteTag)
 	}
 
+	adminCategoryRouter := adminAPIV1.Group("/categories", middleware.AuthMiddleware())
+	{
+		adminCategoryRouter.GET("", controller.GetCategories)
+		adminCategoryRouter.POST("", controller.CreatCategory)
+		adminCategoryRouter.GET(":id", controller.GetCategory)
+		adminCategoryRouter.PATCH(":id", controller.UpdateCategory)
+		adminCategoryRouter.DELETE(":id", controller.DeleteCategory)
+	}
+
 	return r
 }
