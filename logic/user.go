@@ -20,6 +20,7 @@ func GetUserByID(id int64) (users model.User, err error) {
 func DeleteUserByID(id int64) (users model.User, err error) {
 	return mysql.DeleteUserByID(id)
 }
+
 func UpdateUserByID(id int64, params model.ParamsUpdateUser) (users model.User, err error) {
 	return mysql.UpdateUserByID(id, params)
 }

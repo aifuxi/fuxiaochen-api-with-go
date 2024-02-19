@@ -20,11 +20,11 @@ func NewRouter() *gin.Engine {
 
 	adminTagRouter := adminAPIV1.Group("/tags")
 	{
-		adminTagRouter.GET("/", controller.GetTags)
-		adminTagRouter.GET("/:id", controller.GetTag)
-		adminTagRouter.POST("/", controller.CreateTag)
-		adminTagRouter.PATCH("/:id", controller.UpdateTag)
-		adminTagRouter.DELETE("/:id", controller.DeleteTag)
+		adminTagRouter.GET("", controller.GetTags)
+		adminTagRouter.POST("", controller.CreatTag)
+		adminTagRouter.GET(":id", controller.GetTag)
+		adminTagRouter.PATCH(":id", controller.UpdateTag)
+		adminTagRouter.DELETE(":id", controller.DeleteTag)
 	}
 
 	return r

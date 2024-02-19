@@ -1,155 +1,95 @@
 package controller
 
 import (
-	"fmt"
-	"fuxiaochen-api-with-go/global"
+	"fuxiaochen-api-with-go/logic"
 	"fuxiaochen-api-with-go/model"
 	"github.com/gin-gonic/gin"
-	"net/http"
+	"strconv"
 )
 
-func GetTags(ctx *gin.Context) {
-	var tags []model.Tag
-
-	res := global.DB.Find(&tags)
-	if res.Error != nil {
-		ctx.JSON(http.StatusOK, gin.H{
-			"status":  "fail",
-			"message": res.Error.Error(),
-		})
+func GetTags(c *gin.Context) {
+	tags, err := logic.GetTags()
+	if err != nil {
+		ResponseErrorWithMsg(c, CodeInternalServerError, err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"status": "success",
-		"tags":   tags,
-	})
+	ResponseSuccess(c, tags)
 }
 
-func GetTag(ctx *gin.Context) {
-	id := ctx.Param("id")
-	var tag model.Tag
+func CreatTag(c *gin.Context) {
+	var params model.ParamsCreateTag
 
-	res := global.DB.First(&tag, id)
-	if res.Error != nil {
-		ctx.JSON(http.StatusOK, gin.H{
-			"status":  "fail",
-			"message": res.Error.Error(),
-		})
+	if err := c.ShouldBindJSON(&params); err != nil {
+		ResponseError(c, CodeIncorrectRequestParams)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"status": "success",
-		"tag":    tag,
-	})
+	tag, err := logic.CreateTag(params)
+	if err != nil {
+		ResponseErrorWithMsg(c, CodeInternalServerError, err)
+		return
+	}
+
+	ResponseSuccess(c, tag)
 }
 
-type createTagParams struct {
-	Name string `json:"name" binding:"required"`
-	Icon string `json:"icon"`
+func UpdateTag(c *gin.Context) {
+	var params model.ParamsUpdateTag
+	tmp := c.Param("id")
+
+	id, parseErr := strconv.ParseInt(tmp, 10, 64)
+	if parseErr != nil {
+		ResponseError(c, CodeIncorrectIDParams)
+		return
+	}
+
+	if err := c.ShouldBindJSON(&params); err != nil {
+		ResponseError(c, CodeIncorrectRequestParams)
+		return
+	}
+
+	tag, err := logic.UpdateTagByID(id, params)
+	if err != nil {
+		ResponseErrorWithMsg(c, CodeInternalServerError, err)
+		return
+	}
+
+	ResponseSuccess(c, tag)
 }
 
-func CreateTag(ctx *gin.Context) {
-	var params createTagParams
+func GetTag(c *gin.Context) {
+	tmp := c.Param("id")
 
-	if err := ctx.ShouldBindJSON(&params); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"status":  "fail",
-			"message": err.Error(),
-		})
+	id, parseErr := strconv.ParseInt(tmp, 10, 64)
+	if parseErr != nil {
+		ResponseError(c, CodeIncorrectIDParams)
 		return
 	}
 
-	tag := model.Tag{
-		Name: params.Name,
-		Icon: params.Icon,
-	}
-
-	res := global.DB.Create(&tag)
-	if res.Error != nil {
-		ctx.JSON(http.StatusOK, gin.H{
-			"status":  "fail",
-			"message": res.Error.Error(),
-		})
+	tag, err := logic.GetTagByID(id)
+	if err != nil {
+		ResponseErrorWithMsg(c, CodeInternalServerError, err)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"status": "success",
-		"tag":    tag,
-	})
+	ResponseSuccess(c, tag)
 }
 
-type updateTagParams struct {
-	Name string `json:"name"`
-	Icon string `json:"icon"`
-}
+func DeleteTag(c *gin.Context) {
+	tmp := c.Param("id")
 
-func UpdateTag(ctx *gin.Context) {
-	id := ctx.Param("id")
-	var tag model.Tag
-	var params updateTagParams
-
-	if err := ctx.ShouldBindJSON(&params); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"status":  "fail",
-			"message": err.Error(),
-		})
+	id, parseErr := strconv.ParseInt(tmp, 10, 64)
+	if parseErr != nil {
+		ResponseError(c, CodeIncorrectIDParams)
 		return
 	}
 
-	res := global.DB.First(&tag, id)
-	if res.Error != nil {
-		ctx.JSON(http.StatusOK, gin.H{
-			"status":  "fail",
-			"message": res.Error.Error(),
-		})
+	tag, err := logic.DeleteTagByID(id)
+	if err != nil {
+		ResponseErrorWithMsg(c, CodeInternalServerError, err)
 		return
 	}
 
-	res = global.DB.Model(&tag).Updates(&model.Tag{
-		Name: params.Name,
-		Icon: params.Icon,
-	})
-	if res.Error != nil {
-		ctx.JSON(http.StatusOK, gin.H{
-			"status":  "fail",
-			"message": res.Error.Error(),
-		})
-		return
-	}
-
-	ctx.JSON(http.StatusOK, gin.H{
-		"status": "success",
-		"id":     fmt.Sprintf("%d", tag.ID),
-	})
-}
-
-func DeleteTag(ctx *gin.Context) {
-	id := ctx.Param("id")
-	var tag model.Tag
-
-	res := global.DB.First(&tag, id)
-	if res.Error != nil {
-		ctx.JSON(http.StatusOK, gin.H{
-			"status":  "fail",
-			"message": res.Error.Error(),
-		})
-		return
-	}
-
-	res = global.DB.Delete(&model.Tag{}, id)
-	if res.Error != nil {
-		ctx.JSON(http.StatusOK, gin.H{
-			"status":  "fail",
-			"message": res.Error.Error(),
-		})
-		return
-	}
-
-	ctx.JSON(http.StatusOK, gin.H{
-		"status": "success",
-		"id":     fmt.Sprintf("%d", tag.ID),
-	})
+	ResponseSuccess(c, tag)
 }
