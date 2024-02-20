@@ -26,3 +26,5 @@ tmp
 
 config/prod.yaml
 log/*.log
+
+.DS_Store
