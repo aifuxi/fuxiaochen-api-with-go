@@ -7,9 +7,9 @@ import (
 
 type Category struct {
 	Name string `gorm:"size:256;uniqueIndex;comment:分类名称" json:"name"`
-	Slug string `gorm:"size:256;comment:分类slug" json:"slug"`
+	Slug string `gorm:"size:256;uniqueIndex;comment:分类slug" json:"slug"`
 
-	//Posts []Post `json:"posts"`
+	Posts []Post `json:"posts"`
 
 	Model
 }

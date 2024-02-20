@@ -3,30 +3,44 @@ package controller
 import (
 	"fuxiaochen-api-with-go/logic"
 	"fuxiaochen-api-with-go/model"
+	"fuxiaochen-api-with-go/model/param"
 	"github.com/gin-gonic/gin"
-	"strconv"
 )
 
 func GetPosts(c *gin.Context) {
-	posts, err := logic.GetPosts()
-	if err != nil {
-		ResponseError(c, CodeInternalServerError, err)
-		return
-	}
+	var params param.ParamsGetPosts
+	var posts []model.Post
+	var total int64
+	var err error
 
-	ResponseSuccess(c, posts)
-}
-
-func CreatPost(c *gin.Context) {
-	var params model.ParamsCreatePost
-
-	if err := c.ShouldBindJSON(&params); err != nil {
+	if err = c.ShouldBindQuery(&params); err != nil {
 		ResponseError(c, CodeIncorrectRequestParams, err)
 		return
 	}
 
-	post, err := logic.CreatePost(params)
-	if err != nil {
+	// 从 query中获取 array 类型的数据，给params对应字段重新赋值
+	params.Types = c.QueryArray("types")
+	params.Statuses = c.QueryArray("statuses")
+
+	if posts, total, err = logic.GetPosts(params); err != nil {
+		ResponseError(c, CodeInternalServerError, err)
+		return
+	}
+
+	ResponseSuccessWithTotal(c, posts, total)
+}
+
+func CreatPost(c *gin.Context) {
+	var params param.ParamsCreatePost
+	var post model.Post
+	var err error
+
+	if err = c.ShouldBindJSON(&params); err != nil {
+		ResponseError(c, CodeIncorrectRequestParams, err)
+		return
+	}
+
+	if post, err = logic.CreatePost(params); err != nil {
 		ResponseError(c, CodeInternalServerError, err)
 		return
 	}
@@ -35,22 +49,22 @@ func CreatPost(c *gin.Context) {
 }
 
 func UpdatePost(c *gin.Context) {
-	var params model.ParamsUpdatePost
-	tmp := c.Param("id")
+	var params param.ParamsUpdatePost
+	var id int64
+	var post model.Post
+	var err error
 
-	id, parseErr := strconv.ParseInt(tmp, 10, 64)
-	if parseErr != nil {
-		ResponseError(c, CodeIncorrectIDParams, parseErr)
+	if err = GetIDFromParam(c, &id); err != nil {
+		ResponseError(c, CodeIncorrectIDParams, err)
 		return
 	}
 
-	if err := c.ShouldBindJSON(&params); err != nil {
-		ResponseError(c, CodeIncorrectRequestParams, parseErr)
+	if err = c.ShouldBindJSON(&params); err != nil {
+		ResponseError(c, CodeIncorrectRequestParams, err)
 		return
 	}
 
-	post, err := logic.UpdatePostByID(id, params)
-	if err != nil {
+	if post, err = logic.UpdatePostByID(id, params); err != nil {
 		ResponseError(c, CodeInternalServerError, err)
 		return
 	}
@@ -59,16 +73,16 @@ func UpdatePost(c *gin.Context) {
 }
 
 func GetPost(c *gin.Context) {
-	tmp := c.Param("id")
+	var id int64
+	var post model.Post
+	var err error
 
-	id, parseErr := strconv.ParseInt(tmp, 10, 64)
-	if parseErr != nil {
-		ResponseError(c, CodeIncorrectIDParams, parseErr)
+	if err = GetIDFromParam(c, &id); err != nil {
+		ResponseError(c, CodeIncorrectIDParams, err)
 		return
 	}
 
-	post, err := logic.GetPostByID(id)
-	if err != nil {
+	if post, err = logic.GetPostByID(id); err != nil {
 		ResponseError(c, CodeInternalServerError, err)
 		return
 	}
@@ -77,16 +91,16 @@ func GetPost(c *gin.Context) {
 }
 
 func DeletePost(c *gin.Context) {
-	tmp := c.Param("id")
+	var id int64
+	var post model.Post
+	var err error
 
-	id, parseErr := strconv.ParseInt(tmp, 10, 64)
-	if parseErr != nil {
-		ResponseError(c, CodeIncorrectIDParams, parseErr)
+	if err = GetIDFromParam(c, &id); err != nil {
+		ResponseError(c, CodeIncorrectIDParams, err)
 		return
 	}
 
-	post, err := logic.DeletePostByID(id)
-	if err != nil {
+	if post, err = logic.DeletePostByID(id); err != nil {
 		ResponseError(c, CodeInternalServerError, err)
 		return
 	}

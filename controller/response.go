@@ -12,11 +12,25 @@ type ResponseStruct struct {
 	Data any          `json:"data"`
 }
 
+type ResponseStructWithTotal struct {
+	ResponseStruct
+	Total int64 `json:"total,omitempty"`
+}
+
 func ResponseSuccess(c *gin.Context, data any) {
 	c.JSON(http.StatusOK, ResponseStruct{
 		Code: CodeSuccess,
 		Msg:  CodeSuccess.GetMsg(),
 		Data: data,
+	})
+}
+
+func ResponseSuccessWithTotal(c *gin.Context, data any, total int64) {
+	c.JSON(http.StatusOK, ResponseStructWithTotal{
+		ResponseStruct: ResponseStruct{
+			Code: CodeSuccess, Msg: CodeSuccess.GetMsg(), Data: data,
+		},
+		Total: total,
 	})
 }
 

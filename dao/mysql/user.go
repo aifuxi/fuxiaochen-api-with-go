@@ -3,13 +3,18 @@ package mysql
 import (
 	"fuxiaochen-api-with-go/global"
 	"fuxiaochen-api-with-go/model"
+	"fuxiaochen-api-with-go/model/param"
+	"fuxiaochen-api-with-go/model/scope"
 	"gorm.io/gorm/clause"
 )
 
-func GetUsers() (users []model.User, err error) {
-	result := global.DB.Find(&users)
+func GetUsers(params param.ParamsGetUsers) (users []model.User, total int64, err error) {
+	result := global.DB.Scopes(
+		scope.PaginationScope(params.Page, params.Limit),
+		scope.GetUsersScope(params),
+	).Find(&users).Count(&total)
 
-	return users, result.Error
+	return users, total, result.Error
 }
 
 func GetUserByID(id int64) (user model.User, err error) {
@@ -25,8 +30,8 @@ func GetUserByName(name string) (user model.User, err error) {
 }
 
 func DeleteUserByID(id int64) (user model.User, err error) {
-	user, err = GetUserByID(id)
-	if err != nil {
+
+	if user, err = GetUserByID(id); err != nil {
 		return model.User{}, err
 	}
 
@@ -35,9 +40,9 @@ func DeleteUserByID(id int64) (user model.User, err error) {
 	return user, result.Error
 }
 
-func UpdateUserByID(id int64, params model.ParamsUpdateUser) (user model.User, err error) {
-	user, err = GetUserByID(id)
-	if err != nil {
+func UpdateUserByID(id int64, params param.ParamsUpdateUser) (user model.User, err error) {
+
+	if user, err = GetUserByID(id); err != nil {
 		return model.User{}, err
 	}
 
@@ -46,7 +51,7 @@ func UpdateUserByID(id int64, params model.ParamsUpdateUser) (user model.User, e
 	return user, result.Error
 }
 
-func CreateUser(params model.ParamsCreateUser) (user model.User, err error) {
+func CreateUser(params param.ParamsCreateUser) (user model.User, err error) {
 	user = model.User{
 		Name:     params.Name,
 		Password: params.Password,

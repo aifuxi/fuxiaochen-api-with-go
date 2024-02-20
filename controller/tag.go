@@ -3,30 +3,40 @@ package controller
 import (
 	"fuxiaochen-api-with-go/logic"
 	"fuxiaochen-api-with-go/model"
+	"fuxiaochen-api-with-go/model/param"
 	"github.com/gin-gonic/gin"
-	"strconv"
 )
 
 func GetTags(c *gin.Context) {
-	tags, err := logic.GetTags()
-	if err != nil {
-		ResponseError(c, CodeInternalServerError, err)
-		return
-	}
+	var params param.ParamsGetTags
+	var tags []model.Tag
+	var total int64
+	var err error
 
-	ResponseSuccess(c, tags)
-}
-
-func CreatTag(c *gin.Context) {
-	var params model.ParamsCreateTag
-
-	if err := c.ShouldBindJSON(&params); err != nil {
+	if err = c.ShouldBindQuery(&params); err != nil {
 		ResponseError(c, CodeIncorrectRequestParams, err)
 		return
 	}
 
-	tag, err := logic.CreateTag(params)
-	if err != nil {
+	if tags, total, err = logic.GetTags(params); err != nil {
+		ResponseError(c, CodeInternalServerError, err)
+		return
+	}
+
+	ResponseSuccessWithTotal(c, tags, total)
+}
+
+func CreatTag(c *gin.Context) {
+	var params param.ParamsCreateTag
+	var tag model.Tag
+	var err error
+
+	if err = c.ShouldBindJSON(&params); err != nil {
+		ResponseError(c, CodeIncorrectRequestParams, err)
+		return
+	}
+
+	if tag, err = logic.CreateTag(params); err != nil {
 		ResponseError(c, CodeInternalServerError, err)
 		return
 	}
@@ -35,22 +45,22 @@ func CreatTag(c *gin.Context) {
 }
 
 func UpdateTag(c *gin.Context) {
-	var params model.ParamsUpdateTag
-	tmp := c.Param("id")
+	var params param.ParamsUpdateTag
+	var id int64
+	var tag model.Tag
+	var err error
 
-	id, parseErr := strconv.ParseInt(tmp, 10, 64)
-	if parseErr != nil {
-		ResponseError(c, CodeIncorrectIDParams, parseErr)
+	if err = GetIDFromParam(c, &id); err != nil {
+		ResponseError(c, CodeIncorrectIDParams, err)
 		return
 	}
 
-	if err := c.ShouldBindJSON(&params); err != nil {
+	if err = c.ShouldBindJSON(&params); err != nil {
 		ResponseError(c, CodeIncorrectRequestParams, err)
 		return
 	}
 
-	tag, err := logic.UpdateTagByID(id, params)
-	if err != nil {
+	if tag, err = logic.UpdateTagByID(id, params); err != nil {
 		ResponseError(c, CodeInternalServerError, err)
 		return
 	}
@@ -59,16 +69,16 @@ func UpdateTag(c *gin.Context) {
 }
 
 func GetTag(c *gin.Context) {
-	tmp := c.Param("id")
+	var id int64
+	var tag model.Tag
+	var err error
 
-	id, parseErr := strconv.ParseInt(tmp, 10, 64)
-	if parseErr != nil {
-		ResponseError(c, CodeIncorrectIDParams, parseErr)
+	if err = GetIDFromParam(c, &id); err != nil {
+		ResponseError(c, CodeIncorrectIDParams, err)
 		return
 	}
 
-	tag, err := logic.GetTagByID(id)
-	if err != nil {
+	if tag, err = logic.GetTagByID(id); err != nil {
 		ResponseError(c, CodeInternalServerError, err)
 		return
 	}
@@ -77,16 +87,16 @@ func GetTag(c *gin.Context) {
 }
 
 func DeleteTag(c *gin.Context) {
-	tmp := c.Param("id")
+	var id int64
+	var tag model.Tag
+	var err error
 
-	id, parseErr := strconv.ParseInt(tmp, 10, 64)
-	if parseErr != nil {
-		ResponseError(c, CodeIncorrectIDParams, parseErr)
+	if err = GetIDFromParam(c, &id); err != nil {
+		ResponseError(c, CodeIncorrectIDParams, err)
 		return
 	}
 
-	tag, err := logic.DeleteTagByID(id)
-	if err != nil {
+	if tag, err = logic.DeleteTagByID(id); err != nil {
 		ResponseError(c, CodeInternalServerError, err)
 		return
 	}

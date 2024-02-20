@@ -8,17 +8,15 @@ import (
 	"log"
 )
 
-func SetupConfig() error {
+func SetupConfig() (err error) {
 	viper.SetConfigName("dev")
 	viper.AddConfigPath("./config")
 
-	err := viper.ReadInConfig()
-	if err != nil {
+	if err = viper.ReadInConfig(); err != nil {
 		return err
 	}
 
-	err = viper.Unmarshal(global.Conf)
-	if err != nil {
+	if err = viper.Unmarshal(global.Conf); err != nil {
 		return err
 	}
 

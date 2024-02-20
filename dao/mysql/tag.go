@@ -3,10 +3,12 @@ package mysql
 import (
 	"fuxiaochen-api-with-go/global"
 	"fuxiaochen-api-with-go/model"
+	"fuxiaochen-api-with-go/model/param"
+	"fuxiaochen-api-with-go/model/scope"
 	"gorm.io/gorm/clause"
 )
 
-func CreateTag(params model.ParamsCreateTag) (tag model.Tag, err error) {
+func CreateTag(params param.ParamsCreateTag) (tag model.Tag, err error) {
 	tag = model.Tag{
 		Name: params.Name,
 		Icon: params.Icon,
@@ -18,10 +20,13 @@ func CreateTag(params model.ParamsCreateTag) (tag model.Tag, err error) {
 	return tag, result.Error
 }
 
-func GetTags() (tags []model.Tag, err error) {
-	result := global.DB.Preload(model.PostsAssociationKey).Find(&tags)
+func GetTags(params param.ParamsGetTags) (tags []model.Tag, total int64, err error) {
+	result := global.DB.Scopes(
+		scope.PaginationScope(params.Page, params.Limit),
+		scope.GetTagsScope(params),
+	).Find(&tags).Count(&total)
 
-	return tags, result.Error
+	return tags, total, result.Error
 }
 
 func GetTagsByIDs(ids []int64) (tags []model.Tag, err error) {
@@ -31,16 +36,17 @@ func GetTagsByIDs(ids []int64) (tags []model.Tag, err error) {
 }
 
 func GetTagByID(id int64) (tag model.Tag, err error) {
-	result := global.DB.Preload(model.PostsAssociationKey).First(&tag, id)
+	result := global.DB.Preload(model.PostsRetrieveKey).First(&tag, id)
 
 	return tag, result.Error
 }
 
-func UpdateTagByID(id int64, params model.ParamsUpdateTag) (tag model.Tag, err error) {
-	tag, err = GetTagByID(id)
-	if err != nil {
+func UpdateTagByID(id int64, params param.ParamsUpdateTag) (tag model.Tag, err error) {
+
+	if tag, err = GetTagByID(id); err != nil {
 		return model.Tag{}, err
 	}
+
 	result := global.DB.Model(&tag).Updates(model.Tag{
 		Name: params.Name,
 		Icon: params.Icon,
@@ -51,8 +57,8 @@ func UpdateTagByID(id int64, params model.ParamsUpdateTag) (tag model.Tag, err e
 }
 
 func DeleteTagByID(id int64) (tag model.Tag, err error) {
-	tag, err = GetTagByID(id)
-	if err != nil {
+
+	if tag, err = GetTagByID(id); err != nil {
 		return model.Tag{}, err
 	}
 

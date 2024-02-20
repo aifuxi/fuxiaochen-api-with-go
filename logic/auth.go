@@ -4,13 +4,15 @@ import (
 	"errors"
 	"fuxiaochen-api-with-go/dao/mysql"
 	"fuxiaochen-api-with-go/model"
+	"fuxiaochen-api-with-go/model/param"
 	"fuxiaochen-api-with-go/util"
 	"gorm.io/gorm"
 )
 
-func Login(params model.ParamsLogin) (string, error) {
-	user, err := mysql.GetUserByName(params.Name)
-	if err != nil {
+func Login(params param.ParamsLogin) (token string, err error) {
+	var user model.User
+
+	if user, err = mysql.GetUserByName(params.Name); err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return "", ErrorUsernameOrPassword
 		}
@@ -23,8 +25,7 @@ func Login(params model.ParamsLogin) (string, error) {
 		return "", ErrorUsernameOrPassword
 	}
 
-	token, err := util.NewToken(user.ID)
-	if err != nil {
+	if token, err = util.NewToken(user.ID); err != nil {
 		return "", err
 	}
 

@@ -3,30 +3,40 @@ package controller
 import (
 	"fuxiaochen-api-with-go/logic"
 	"fuxiaochen-api-with-go/model"
+	"fuxiaochen-api-with-go/model/param"
 	"github.com/gin-gonic/gin"
-	"strconv"
 )
 
 func GetUsers(c *gin.Context) {
-	users, err := logic.GetUsers()
-	if err != nil {
-		ResponseError(c, CodeInternalServerError, err)
-		return
-	}
+	var params param.ParamsGetUsers
+	var users []model.User
+	var total int64
+	var err error
 
-	ResponseSuccess(c, users)
-}
-
-func CreatUser(c *gin.Context) {
-	var params model.ParamsCreateUser
-
-	if err := c.ShouldBindJSON(&params); err != nil {
+	if err = c.ShouldBindQuery(&params); err != nil {
 		ResponseError(c, CodeIncorrectRequestParams, err)
 		return
 	}
 
-	user, err := logic.CreateUser(params)
-	if err != nil {
+	if users, total, err = logic.GetUsers(params); err != nil {
+		ResponseError(c, CodeInternalServerError, err)
+		return
+	}
+
+	ResponseSuccessWithTotal(c, users, total)
+}
+
+func CreatUser(c *gin.Context) {
+	var params param.ParamsCreateUser
+	var user model.User
+	var err error
+
+	if err = c.ShouldBindJSON(&params); err != nil {
+		ResponseError(c, CodeIncorrectRequestParams, err)
+		return
+	}
+
+	if user, err = logic.CreateUser(params); err != nil {
 		ResponseError(c, CodeInternalServerError, err)
 		return
 	}
@@ -35,22 +45,22 @@ func CreatUser(c *gin.Context) {
 }
 
 func UpdateUser(c *gin.Context) {
-	var params model.ParamsUpdateUser
-	tmp := c.Param("id")
+	var params param.ParamsUpdateUser
+	var id int64
+	var user model.User
+	var err error
 
-	id, parseErr := strconv.ParseInt(tmp, 10, 64)
-	if parseErr != nil {
-		ResponseError(c, CodeIncorrectIDParams, parseErr)
+	if err = GetIDFromParam(c, &id); err != nil {
+		ResponseError(c, CodeIncorrectIDParams, err)
 		return
 	}
 
-	if err := c.ShouldBindJSON(&params); err != nil {
+	if err = c.ShouldBindJSON(&params); err != nil {
 		ResponseError(c, CodeIncorrectRequestParams, err)
 		return
 	}
 
-	user, err := logic.UpdateUserByID(id, params)
-	if err != nil {
+	if user, err = logic.UpdateUserByID(id, params); err != nil {
 		ResponseError(c, CodeInternalServerError, err)
 		return
 	}
@@ -59,16 +69,16 @@ func UpdateUser(c *gin.Context) {
 }
 
 func GetUser(c *gin.Context) {
-	tmp := c.Param("id")
+	var id int64
+	var user model.User
+	var err error
 
-	id, parseErr := strconv.ParseInt(tmp, 10, 64)
-	if parseErr != nil {
-		ResponseError(c, CodeIncorrectIDParams, parseErr)
+	if err = GetIDFromParam(c, &id); err != nil {
+		ResponseError(c, CodeIncorrectIDParams, err)
 		return
 	}
 
-	user, err := logic.GetUserByID(id)
-	if err != nil {
+	if user, err = logic.GetUserByID(id); err != nil {
 		ResponseError(c, CodeInternalServerError, err)
 		return
 	}
@@ -77,16 +87,16 @@ func GetUser(c *gin.Context) {
 }
 
 func DeleteUser(c *gin.Context) {
-	tmp := c.Param("id")
+	var id int64
+	var user model.User
+	var err error
 
-	id, parseErr := strconv.ParseInt(tmp, 10, 64)
-	if parseErr != nil {
-		ResponseError(c, CodeIncorrectIDParams, parseErr)
+	if err = GetIDFromParam(c, &id); err != nil {
+		ResponseError(c, CodeIncorrectIDParams, err)
 		return
 	}
 
-	user, err := logic.DeleteUserByID(id)
-	if err != nil {
+	if user, err = logic.DeleteUserByID(id); err != nil {
 		ResponseError(c, CodeInternalServerError, err)
 		return
 	}

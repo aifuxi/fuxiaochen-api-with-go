@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fuxiaochen-api-with-go/constant"
 	"fuxiaochen-api-with-go/controller"
 	"fuxiaochen-api-with-go/util"
 	"github.com/gin-gonic/gin"
@@ -9,7 +10,7 @@ import (
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		bearerToken := c.Request.Header.Get("Authorization")
+		bearerToken := c.Request.Header.Get(constant.Authorization)
 		if bearerToken == "" {
 			controller.ResponseError(c, controller.CodeTokenNotFound, nil)
 			c.Abort()
@@ -17,7 +18,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		parts := strings.SplitN(bearerToken, " ", 2)
-		if len(parts) != 2 || parts[0] != "Bearer" {
+		if len(parts) != 2 || parts[0] != constant.Bearer {
 			controller.ResponseError(c, controller.CodeIncorrectTokenFormat, nil)
 			c.Abort()
 			return
@@ -31,7 +32,7 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		c.Set("userID", claims.UserID)
+		c.Set(constant.UserID, claims.UserID)
 		c.Next()
 	}
 }

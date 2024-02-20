@@ -3,30 +3,37 @@ package mysql
 import (
 	"fuxiaochen-api-with-go/global"
 	"fuxiaochen-api-with-go/model"
+	"fuxiaochen-api-with-go/model/param"
+	"fuxiaochen-api-with-go/model/scope"
 	"github.com/samber/lo"
 	"gorm.io/gorm/clause"
 	"strconv"
 )
 
-func CreatePost(params model.ParamsCreatePost) (post model.Post, err error) {
-	//categoryID, parseErr := strconv.ParseInt(params.CategoryID, 10, 64)
-	//if parseErr != nil {
-	//	return model.Post{}, parseErr
-	//}
-	post = model.Post{
-		Title:  params.Title,
-		Body:   params.Body,
-		Desc:   params.Desc,
-		Slug:   params.Slug,
-		Cover:  params.Cover,
-		Author: params.Author,
-		Type:   params.Type,
-		Status: params.Status,
-		Secret: params.Secret,
-		//CategoryID: categoryID,
+func CreatePost(params param.ParamsCreatePost) (post model.Post, err error) {
+	var categoryID int64
+
+	if params.CategoryID != "" {
+		categoryID, err = strconv.ParseInt(params.CategoryID, 10, 64)
+
+		if err != nil {
+			return model.Post{}, err
+		}
 	}
 
-	global.L.Debugf("创建文章参数 %#v\n", params)
+	post = model.Post{
+		Title:      params.Title,
+		Body:       params.Body,
+		Desc:       params.Desc,
+		Slug:       params.Slug,
+		Cover:      params.Cover,
+		Author:     params.Author,
+		Type:       params.Type,
+		Status:     params.Status,
+		Secret:     params.Secret,
+		CategoryID: categoryID,
+	}
+
 	ids := lo.FilterMap(params.TagIDs, func(v string, _ int) (int64, bool) {
 		i, err := strconv.ParseInt(v, 10, 64)
 		if err != nil {
@@ -37,54 +44,66 @@ func CreatePost(params model.ParamsCreatePost) (post model.Post, err error) {
 	})
 
 	var tags []model.Tag
-	tags, err = GetTagsByIDs(ids)
-	global.L.Debugf("关联的tags %#v\n", tags)
-	if err != nil {
-		return model.Post{}, err
+	if len(ids) > 0 {
+		tags, err = GetTagsByIDs(ids)
+		global.L.Debugf("关联的tags %#v\n", tags)
+		if err != nil {
+			return model.Post{}, err
+		}
 	}
 
-	result := global.DB.Create(&post)
-	err = global.DB.Model(&post).Association(model.TagsAssociationKey).Append(tags)
-	if err != nil {
+	result := global.DB.Scopes(
+		model.PostUpdateCategoryScope(categoryID),
+	).Create(&post)
+
+	if err = global.DB.Model(&post).Association(model.TagsRetrieveKey).Append(tags); err != nil {
 		return model.Post{}, err
 	}
 
 	return post, result.Error
 }
 
-func GetPosts() (posts []model.Post, err error) {
-	result := global.DB.Preload(model.TagsAssociationKey).Find(&posts)
+func GetPosts(params param.ParamsGetPosts) (posts []model.Post, total int64, err error) {
+	result := global.DB.Scopes(
+		scope.PaginationScope(params.Page, params.Limit),
+		scope.GetPostsScope(params),
+	).Preload(model.TagsRetrieveKey).Find(&posts).Count(&total)
 
-	return posts, result.Error
-}
-
-func GetPostsByIDs(ids []int64) (posts []model.Post, err error) {
-	result := global.DB.Find(&posts, ids)
-
-	return posts, result.Error
+	return posts, total, result.Error
 }
 
 func GetPostByID(id int64) (post model.Post, err error) {
-	result := global.DB.Preload(model.TagsAssociationKey).First(&post, id)
+	result := global.DB.Preload(model.TagsRetrieveKey).First(&post, id)
 
 	return post, result.Error
 }
 
-func UpdatePostByID(id int64, params model.ParamsUpdatePost) (post model.Post, err error) {
-	post, err = GetPostByID(id)
-	if err != nil {
+func UpdatePostByID(id int64, params param.ParamsUpdatePost) (post model.Post, err error) {
+
+	if post, err = GetPostByID(id); err != nil {
 		return model.Post{}, err
 	}
-	result := global.DB.Model(&post).Updates(model.Post{
-		Title:  params.Title,
-		Body:   params.Body,
-		Desc:   params.Desc,
-		Slug:   params.Slug,
-		Cover:  params.Cover,
-		Author: params.Author,
-		Type:   params.Type,
-		Status: params.Status,
-		Secret: params.Secret,
+
+	var categoryID int64
+
+	if params.CategoryID != "" {
+		categoryID, err = strconv.ParseInt(params.CategoryID, 10, 64)
+		if err != nil {
+			return model.Post{}, err
+		}
+	}
+
+	result := global.DB.Scopes(model.PostUpdateCategoryScope(categoryID)).Model(&post).Updates(model.Post{
+		Title:      params.Title,
+		Body:       params.Body,
+		Desc:       params.Desc,
+		Slug:       params.Slug,
+		Cover:      params.Cover,
+		Author:     params.Author,
+		Type:       params.Type,
+		Status:     params.Status,
+		Secret:     params.Secret,
+		CategoryID: categoryID,
 	})
 
 	ids := lo.FilterMap(params.TagIDs, func(v string, _ int) (int64, bool) {
@@ -97,13 +116,12 @@ func UpdatePostByID(id int64, params model.ParamsUpdatePost) (post model.Post, e
 	})
 
 	var tags []model.Tag
-	tags, err = GetTagsByIDs(ids)
-	if err != nil {
+
+	if tags, err = GetTagsByIDs(ids); err != nil {
 		return model.Post{}, err
 	}
 
-	err = global.DB.Model(&post).Association(model.TagsAssociationKey).Replace(tags)
-	if err != nil {
+	if err = global.DB.Model(&post).Association(model.TagsRetrieveKey).Replace(tags); err != nil {
 		return model.Post{}, err
 	}
 
@@ -111,8 +129,8 @@ func UpdatePostByID(id int64, params model.ParamsUpdatePost) (post model.Post, e
 }
 
 func DeletePostByID(id int64) (post model.Post, err error) {
-	post, err = GetPostByID(id)
-	if err != nil {
+
+	if post, err = GetPostByID(id); err != nil {
 		return model.Post{}, err
 	}
 
