@@ -11,17 +11,17 @@ func Login(c *gin.Context) {
 	var params model.ParamsLogin
 
 	if err := c.ShouldBindJSON(&params); err != nil {
-		ResponseError(c, CodeIncorrectRequestParams)
+		ResponseError(c, CodeIncorrectRequestParams, err)
 		return
 	}
 
 	token, err := logic.Login(params)
 	if err != nil {
 		if errors.Is(err, logic.ErrorUsernameOrPassword) {
-			ResponseError(c, CodeIncorrectUsernameOrPassword)
+			ResponseError(c, CodeIncorrectUsernameOrPassword, err)
 			return
 		}
-		ResponseErrorWithErr(c, CodeInternalServerError, err)
+		ResponseError(c, CodeInternalServerError, err)
 		return
 	}
 

@@ -10,7 +10,7 @@ import (
 func GetTags(c *gin.Context) {
 	tags, err := logic.GetTags()
 	if err != nil {
-		ResponseErrorWithErr(c, CodeInternalServerError, err)
+		ResponseError(c, CodeInternalServerError, err)
 		return
 	}
 
@@ -21,13 +21,13 @@ func CreatTag(c *gin.Context) {
 	var params model.ParamsCreateTag
 
 	if err := c.ShouldBindJSON(&params); err != nil {
-		ResponseError(c, CodeIncorrectRequestParams)
+		ResponseError(c, CodeIncorrectRequestParams, err)
 		return
 	}
 
 	tag, err := logic.CreateTag(params)
 	if err != nil {
-		ResponseErrorWithErr(c, CodeInternalServerError, err)
+		ResponseError(c, CodeInternalServerError, err)
 		return
 	}
 
@@ -40,18 +40,18 @@ func UpdateTag(c *gin.Context) {
 
 	id, parseErr := strconv.ParseInt(tmp, 10, 64)
 	if parseErr != nil {
-		ResponseError(c, CodeIncorrectIDParams)
+		ResponseError(c, CodeIncorrectIDParams, parseErr)
 		return
 	}
 
 	if err := c.ShouldBindJSON(&params); err != nil {
-		ResponseError(c, CodeIncorrectRequestParams)
+		ResponseError(c, CodeIncorrectRequestParams, err)
 		return
 	}
 
 	tag, err := logic.UpdateTagByID(id, params)
 	if err != nil {
-		ResponseErrorWithErr(c, CodeInternalServerError, err)
+		ResponseError(c, CodeInternalServerError, err)
 		return
 	}
 
@@ -63,13 +63,13 @@ func GetTag(c *gin.Context) {
 
 	id, parseErr := strconv.ParseInt(tmp, 10, 64)
 	if parseErr != nil {
-		ResponseError(c, CodeIncorrectIDParams)
+		ResponseError(c, CodeIncorrectIDParams, parseErr)
 		return
 	}
 
 	tag, err := logic.GetTagByID(id)
 	if err != nil {
-		ResponseErrorWithErr(c, CodeInternalServerError, err)
+		ResponseError(c, CodeInternalServerError, err)
 		return
 	}
 
@@ -81,13 +81,13 @@ func DeleteTag(c *gin.Context) {
 
 	id, parseErr := strconv.ParseInt(tmp, 10, 64)
 	if parseErr != nil {
-		ResponseError(c, CodeIncorrectIDParams)
+		ResponseError(c, CodeIncorrectIDParams, parseErr)
 		return
 	}
 
 	tag, err := logic.DeleteTagByID(id)
 	if err != nil {
-		ResponseErrorWithErr(c, CodeInternalServerError, err)
+		ResponseError(c, CodeInternalServerError, err)
 		return
 	}
 

@@ -8,9 +8,9 @@ import (
 const PostsAssociationKey = "Posts"
 
 type Tag struct {
-	Name string `gorm:"size:256;uniqueIndex;comment:标签名称" json:"name,omitempty"`
-	Icon string `gorm:"comment:标签图标" json:"icon,omitempty"`
-	Slug string `gorm:"size:256;comment:标签slug" json:"slug,omitempty"`
+	Name string `gorm:"size:256;uniqueIndex;comment:标签名称" json:"name"`
+	Icon string `gorm:"comment:标签图标" json:"icon"`
+	Slug string `gorm:"size:256;comment:标签slug" json:"slug"`
 
 	Posts *[]Post `gorm:"many2many:post_tags;" json:"posts"`
 
@@ -18,7 +18,8 @@ type Tag struct {
 }
 
 func (t *Tag) BeforeCreate(_ *gorm.DB) (err error) {
-	t.ID = util.NewSnowflakeID()
-
+	if t.ID == 0 {
+		t.ID = util.NewSnowflakeID()
+	}
 	return
 }

@@ -11,14 +11,14 @@ func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		bearerToken := c.Request.Header.Get("Authorization")
 		if bearerToken == "" {
-			controller.ResponseError(c, controller.CodeTokenNotFound)
+			controller.ResponseError(c, controller.CodeTokenNotFound, nil)
 			c.Abort()
 			return
 		}
 
 		parts := strings.SplitN(bearerToken, " ", 2)
 		if len(parts) != 2 || parts[0] != "Bearer" {
-			controller.ResponseError(c, controller.CodeIncorrectTokenFormat)
+			controller.ResponseError(c, controller.CodeIncorrectTokenFormat, nil)
 			c.Abort()
 			return
 		}
@@ -26,7 +26,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		token := parts[1]
 		claims, err := util.ParseToken(token)
 		if err != nil {
-			controller.ResponseError(c, controller.CodeIncorrectToken)
+			controller.ResponseError(c, controller.CodeIncorrectToken, nil)
 			c.Abort()
 			return
 		}

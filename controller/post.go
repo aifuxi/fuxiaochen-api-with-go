@@ -7,35 +7,35 @@ import (
 	"strconv"
 )
 
-func GetUsers(c *gin.Context) {
-	users, err := logic.GetUsers()
+func GetPosts(c *gin.Context) {
+	posts, err := logic.GetPosts()
 	if err != nil {
 		ResponseError(c, CodeInternalServerError, err)
 		return
 	}
 
-	ResponseSuccess(c, users)
+	ResponseSuccess(c, posts)
 }
 
-func CreatUser(c *gin.Context) {
-	var params model.ParamsCreateUser
+func CreatPost(c *gin.Context) {
+	var params model.ParamsCreatePost
 
 	if err := c.ShouldBindJSON(&params); err != nil {
 		ResponseError(c, CodeIncorrectRequestParams, err)
 		return
 	}
 
-	user, err := logic.CreateUser(params)
+	post, err := logic.CreatePost(params)
 	if err != nil {
 		ResponseError(c, CodeInternalServerError, err)
 		return
 	}
 
-	ResponseSuccess(c, user)
+	ResponseSuccess(c, post)
 }
 
-func UpdateUser(c *gin.Context) {
-	var params model.ParamsUpdateUser
+func UpdatePost(c *gin.Context) {
+	var params model.ParamsUpdatePost
 	tmp := c.Param("id")
 
 	id, parseErr := strconv.ParseInt(tmp, 10, 64)
@@ -45,20 +45,20 @@ func UpdateUser(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&params); err != nil {
-		ResponseError(c, CodeIncorrectRequestParams, err)
+		ResponseError(c, CodeIncorrectRequestParams, parseErr)
 		return
 	}
 
-	user, err := logic.UpdateUserByID(id, params)
+	post, err := logic.UpdatePostByID(id, params)
 	if err != nil {
 		ResponseError(c, CodeInternalServerError, err)
 		return
 	}
 
-	ResponseSuccess(c, user)
+	ResponseSuccess(c, post)
 }
 
-func GetUser(c *gin.Context) {
+func GetPost(c *gin.Context) {
 	tmp := c.Param("id")
 
 	id, parseErr := strconv.ParseInt(tmp, 10, 64)
@@ -67,16 +67,16 @@ func GetUser(c *gin.Context) {
 		return
 	}
 
-	user, err := logic.GetUserByID(id)
+	post, err := logic.GetPostByID(id)
 	if err != nil {
 		ResponseError(c, CodeInternalServerError, err)
 		return
 	}
 
-	ResponseSuccess(c, user)
+	ResponseSuccess(c, post)
 }
 
-func DeleteUser(c *gin.Context) {
+func DeletePost(c *gin.Context) {
 	tmp := c.Param("id")
 
 	id, parseErr := strconv.ParseInt(tmp, 10, 64)
@@ -85,11 +85,11 @@ func DeleteUser(c *gin.Context) {
 		return
 	}
 
-	user, err := logic.DeleteUserByID(id)
+	post, err := logic.DeletePostByID(id)
 	if err != nil {
 		ResponseError(c, CodeInternalServerError, err)
 		return
 	}
 
-	ResponseSuccess(c, user)
+	ResponseSuccess(c, post)
 }

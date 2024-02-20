@@ -18,14 +18,14 @@ func main() {
 
 	initialize.SetupLogger()
 
-	err = initialize.SetupDB()
-	if err != nil {
-		global.L.Fatalf("数据库连接失败: %v\n", err)
-	}
-
 	err = initialize.SetupSnowflakeNode()
 	if err != nil {
 		global.L.Fatalf("初始化雪花算法节点失败: %v\n", err)
+	}
+
+	err = initialize.SetupDB()
+	if err != nil {
+		global.L.Fatalf("数据库连接失败: %v\n", err)
 	}
 
 	r := router.NewRouter()

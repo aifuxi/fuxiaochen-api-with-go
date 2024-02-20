@@ -3,6 +3,8 @@ app:
   port: 6122
   # 可选值：debug release test, 和 Gin 的 mode 对齐
   mode: "debug"
+  admin_username: "admin"
+  admin_password: "123456"
 
 mysql:
   host: "127.0.0.1"

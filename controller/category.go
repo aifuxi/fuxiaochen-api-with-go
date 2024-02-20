@@ -10,7 +10,7 @@ import (
 func GetCategories(c *gin.Context) {
 	categories, err := logic.GetCategories()
 	if err != nil {
-		ResponseErrorWithErr(c, CodeInternalServerError, err)
+		ResponseError(c, CodeInternalServerError, err)
 		return
 	}
 
@@ -21,13 +21,13 @@ func CreatCategory(c *gin.Context) {
 	var params model.ParamsCreateCategory
 
 	if err := c.ShouldBindJSON(&params); err != nil {
-		ResponseError(c, CodeIncorrectRequestParams)
+		ResponseError(c, CodeIncorrectRequestParams, err)
 		return
 	}
 
 	tag, err := logic.CreateCategory(params)
 	if err != nil {
-		ResponseErrorWithErr(c, CodeInternalServerError, err)
+		ResponseError(c, CodeInternalServerError, err)
 		return
 	}
 
@@ -40,18 +40,18 @@ func UpdateCategory(c *gin.Context) {
 
 	id, parseErr := strconv.ParseInt(tmp, 10, 64)
 	if parseErr != nil {
-		ResponseError(c, CodeIncorrectIDParams)
+		ResponseError(c, CodeIncorrectIDParams, parseErr)
 		return
 	}
 
 	if err := c.ShouldBindJSON(&params); err != nil {
-		ResponseError(c, CodeIncorrectRequestParams)
+		ResponseError(c, CodeIncorrectRequestParams, err)
 		return
 	}
 
 	tag, err := logic.UpdateCategoryByID(id, params)
 	if err != nil {
-		ResponseErrorWithErr(c, CodeInternalServerError, err)
+		ResponseError(c, CodeInternalServerError, err)
 		return
 	}
 
@@ -63,13 +63,13 @@ func GetCategory(c *gin.Context) {
 
 	id, parseErr := strconv.ParseInt(tmp, 10, 64)
 	if parseErr != nil {
-		ResponseError(c, CodeIncorrectIDParams)
+		ResponseError(c, CodeIncorrectIDParams, parseErr)
 		return
 	}
 
 	tag, err := logic.GetCategoryByID(id)
 	if err != nil {
-		ResponseErrorWithErr(c, CodeInternalServerError, err)
+		ResponseError(c, CodeInternalServerError, err)
 		return
 	}
 
@@ -81,13 +81,13 @@ func DeleteCategory(c *gin.Context) {
 
 	id, parseErr := strconv.ParseInt(tmp, 10, 64)
 	if parseErr != nil {
-		ResponseError(c, CodeIncorrectIDParams)
+		ResponseError(c, CodeIncorrectIDParams, parseErr)
 		return
 	}
 
 	tag, err := logic.DeleteCategoryByID(id)
 	if err != nil {
-		ResponseErrorWithErr(c, CodeInternalServerError, err)
+		ResponseError(c, CodeInternalServerError, err)
 		return
 	}
 

@@ -20,22 +20,23 @@ func ResponseSuccess(c *gin.Context, data any) {
 	})
 }
 
-func ResponseError(c *gin.Context, code ResponseCode) {
+func ResponseError(c *gin.Context, code ResponseCode, err error) {
+	msg := code.GetMsg()
+
+	if err != nil {
+		global.L.Error(err)
+
+		if code == CodeInternalServerError {
+			msg = err.Error()
+		}
+
+	} else {
+		global.L.Error(msg)
+	}
+
 	c.JSON(http.StatusOK, ResponseStruct{
 		Code: code,
-		Msg:  code.GetMsg(),
+		Msg:  msg,
 		Data: nil,
 	})
-
-	global.L.Error(code.GetMsg())
-}
-
-func ResponseErrorWithErr(c *gin.Context, code ResponseCode, err error) {
-	c.JSON(http.StatusOK, ResponseStruct{
-		Code: code,
-		Msg:  err.Error(),
-		Data: nil,
-	})
-
-	global.L.Error(err)
 }
