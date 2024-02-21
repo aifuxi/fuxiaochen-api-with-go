@@ -9,25 +9,24 @@ import (
 	"gorm.io/gorm"
 )
 
-func Login(params param.ParamsLogin) (token string, err error) {
-	var user model.User
+func Login(params param.ParamsLogin) (token string, user model.User, err error) {
 
 	if user, err = mysql.GetUserByName(params.Name); err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return "", ErrorUsernameOrPassword
+			return "", model.User{}, ErrorUsernameOrPassword
 		}
 
-		return "", err
+		return "", model.User{}, err
 	}
 
 	// 检查密码是否正确
 	if err = util.ComparePassword([]byte(user.Password), []byte(params.Password)); err != nil {
-		return "", ErrorUsernameOrPassword
+		return "", model.User{}, ErrorUsernameOrPassword
 	}
 
 	if token, err = util.NewToken(user.ID); err != nil {
-		return "", err
+		return "", model.User{}, err
 	}
 
-	return token, nil
+	return token, user, nil
 }

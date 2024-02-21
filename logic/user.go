@@ -18,6 +18,10 @@ func GetUserByID(id int64) (users model.User, err error) {
 	return mysql.GetUserByID(id)
 }
 
+func GetUserByName(id int64) (users model.User, err error) {
+	return mysql.GetUserByID(id)
+}
+
 func DeleteUserByID(id int64) (users model.User, err error) {
 	return mysql.DeleteUserByID(id)
 }
