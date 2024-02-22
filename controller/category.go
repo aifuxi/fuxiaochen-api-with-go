@@ -50,7 +50,7 @@ func UpdateCategory(c *gin.Context) {
 	var category model.Category
 	var err error
 
-	if err = GetIDFromParam(c, &id); err != nil {
+	if id, err = GetIDFromParam(c); err != nil {
 		ResponseError(c, CodeIncorrectIDParams, err)
 		return
 	}
@@ -73,7 +73,7 @@ func GetCategory(c *gin.Context) {
 	var category model.Category
 	var err error
 
-	if err = GetIDFromParam(c, &id); err != nil {
+	if id, err = GetIDFromParam(c); err != nil {
 		ResponseError(c, CodeIncorrectIDParams, err)
 		return
 	}
@@ -91,7 +91,7 @@ func DeleteCategory(c *gin.Context) {
 	var category model.Category
 	var err error
 
-	if err = GetIDFromParam(c, &id); err != nil {
+	if id, err = GetIDFromParam(c); err != nil {
 		ResponseError(c, CodeIncorrectIDParams, err)
 		return
 	}

@@ -50,7 +50,7 @@ func UpdateUser(c *gin.Context) {
 	var user model.User
 	var err error
 
-	if err = GetIDFromParam(c, &id); err != nil {
+	if id, err = GetIDFromParam(c); err != nil {
 		ResponseError(c, CodeIncorrectIDParams, err)
 		return
 	}
@@ -73,7 +73,7 @@ func GetUser(c *gin.Context) {
 	var user model.User
 	var err error
 
-	if err = GetIDFromParam(c, &id); err != nil {
+	if id, err = GetIDFromParam(c); err != nil {
 		ResponseError(c, CodeIncorrectIDParams, err)
 		return
 	}
@@ -91,7 +91,7 @@ func DeleteUser(c *gin.Context) {
 	var user model.User
 	var err error
 
-	if err = GetIDFromParam(c, &id); err != nil {
+	if id, err = GetIDFromParam(c); err != nil {
 		ResponseError(c, CodeIncorrectIDParams, err)
 		return
 	}

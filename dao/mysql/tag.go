@@ -36,7 +36,7 @@ func GetTagsByIDs(ids []int64) (tags []model.Tag, err error) {
 }
 
 func GetTagByID(id int64) (tag model.Tag, err error) {
-	result := global.DB.Preload(model.PostsRetrieveKey).First(&tag, id)
+	result := global.DB.First(&tag, id)
 
 	return tag, result.Error
 }

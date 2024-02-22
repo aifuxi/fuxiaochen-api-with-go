@@ -5,13 +5,12 @@ import (
 	"strconv"
 )
 
-func GetIDFromParam(c *gin.Context, id *int64) (err error) {
+func GetIDFromParam(c *gin.Context) (id int64, err error) {
 	tmp := c.Param("id")
-	var tmpID int64
 
-	if tmpID, err = strconv.ParseInt(tmp, 10, 64); err != nil {
-		return err
+	if id, err = strconv.ParseInt(tmp, 10, 64); err != nil {
+		return id, err
 	}
-	id = &tmpID
-	return nil
+
+	return id, nil
 }

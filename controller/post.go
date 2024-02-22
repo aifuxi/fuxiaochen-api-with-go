@@ -54,7 +54,7 @@ func UpdatePost(c *gin.Context) {
 	var post model.Post
 	var err error
 
-	if err = GetIDFromParam(c, &id); err != nil {
+	if id, err = GetIDFromParam(c); err != nil {
 		ResponseError(c, CodeIncorrectIDParams, err)
 		return
 	}
@@ -77,7 +77,7 @@ func GetPost(c *gin.Context) {
 	var post model.Post
 	var err error
 
-	if err = GetIDFromParam(c, &id); err != nil {
+	if id, err = GetIDFromParam(c); err != nil {
 		ResponseError(c, CodeIncorrectIDParams, err)
 		return
 	}
@@ -95,7 +95,7 @@ func DeletePost(c *gin.Context) {
 	var post model.Post
 	var err error
 
-	if err = GetIDFromParam(c, &id); err != nil {
+	if id, err = GetIDFromParam(c); err != nil {
 		ResponseError(c, CodeIncorrectIDParams, err)
 		return
 	}

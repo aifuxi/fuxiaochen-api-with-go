@@ -50,7 +50,7 @@ func UpdateTag(c *gin.Context) {
 	var tag model.Tag
 	var err error
 
-	if err = GetIDFromParam(c, &id); err != nil {
+	if id, err = GetIDFromParam(c); err != nil {
 		ResponseError(c, CodeIncorrectIDParams, err)
 		return
 	}
@@ -73,7 +73,7 @@ func GetTag(c *gin.Context) {
 	var tag model.Tag
 	var err error
 
-	if err = GetIDFromParam(c, &id); err != nil {
+	if id, err = GetIDFromParam(c); err != nil {
 		ResponseError(c, CodeIncorrectIDParams, err)
 		return
 	}
@@ -91,7 +91,7 @@ func DeleteTag(c *gin.Context) {
 	var tag model.Tag
 	var err error
 
-	if err = GetIDFromParam(c, &id); err != nil {
+	if id, err = GetIDFromParam(c); err != nil {
 		ResponseError(c, CodeIncorrectIDParams, err)
 		return
 	}
