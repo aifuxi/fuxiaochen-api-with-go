@@ -21,10 +21,11 @@ func CreateTag(params param.ParamsCreateTag) (tag model.Tag, err error) {
 }
 
 func GetTags(params param.ParamsGetTags) (tags []model.Tag, total int64, err error) {
-	result := global.DB.Scopes(
+	// Offset(-1)和Limit(-1) 很重要，也是一个小技巧，不加的话会在统计条数后也加上offset和limit，导致查不到条数
+	result := global.DB.Debug().Scopes(
 		scope.PaginationScope(params.Page, params.Limit),
 		scope.GetTagsScope(params),
-	).Find(&tags).Count(&total)
+	).Find(&tags).Offset(-1).Limit(-1).Count(&total)
 
 	return tags, total, result.Error
 }

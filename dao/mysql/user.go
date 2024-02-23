@@ -12,7 +12,7 @@ func GetUsers(params param.ParamsGetUsers) (users []model.User, total int64, err
 	result := global.DB.Scopes(
 		scope.PaginationScope(params.Page, params.Limit),
 		scope.GetUsersScope(params),
-	).Find(&users).Count(&total)
+	).Find(&users).Offset(-1).Limit(-1).Count(&total)
 
 	return users, total, result.Error
 }

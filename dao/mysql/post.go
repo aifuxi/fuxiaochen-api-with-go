@@ -67,7 +67,7 @@ func GetPosts(params param.ParamsGetPosts) (posts []model.Post, total int64, err
 	result := global.DB.Scopes(
 		scope.PaginationScope(params.Page, params.Limit),
 		scope.GetPostsScope(params),
-	).Preload(model.TagsRetrieveKey).Find(&posts).Count(&total)
+	).Preload(model.TagsRetrieveKey).Find(&posts).Offset(-1).Limit(-1).Count(&total)
 
 	return posts, total, result.Error
 }
