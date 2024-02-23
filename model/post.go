@@ -12,8 +12,8 @@ type Post struct {
 	Slug   string `gorm:"size:256;uniqueIndex;comment:文章slug" json:"slug"`
 	Cover  string `gorm:"size:256;comment:文章封面" json:"cover"`
 	Author string `gorm:"size:256;comment:文章作者" json:"author"`
-	Type   int    `gorm:"comment:文章类型" json:"type"`
-	Status int    `gorm:"comment:文章状态" json:"status"`
+	Type   int    `gorm:"comment:文章类型：1 原创、 2 转载、 3 翻译" json:"type"`
+	Status int    `gorm:"comment:文章状态：1 已发布、2 草稿、3 加密" json:"status"`
 	Secret string `gorm:"size:256;comment:文章加密的密码" json:"secret"`
 
 	Tags       []*Tag `gorm:"many2many:post_tags;" json:"tags"`
