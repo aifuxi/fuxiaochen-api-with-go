@@ -23,7 +23,7 @@ func GetCategories(params param.ParamsGetCategories) (categories []model.Categor
 	result := global.DB.Scopes(
 		scope.PaginationScope(params.Page, params.Limit),
 		scope.GetCategoriesScope(params),
-	).Find(&categories).Offset(-1).Limit(-1).Count(&total)
+	).Find(&categories).Scopes(scope.CountScope).Count(&total)
 
 	return categories, total, result.Error
 }
