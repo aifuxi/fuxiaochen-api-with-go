@@ -8,6 +8,8 @@ type AppConfig struct {
 	Mode          string `mapstructure:"mode"`
 	AdminUsername string `mapstructure:"admin_username"`
 	AdminPassword string `mapstructure:"admin_password"`
+	UploadDir     string `mapstructure:"upload_dir"`
+	StaticPath    string `mapstructure:"static_path"`
 }
 
 type MySQLConfig struct {

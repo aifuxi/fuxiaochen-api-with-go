@@ -5,6 +5,10 @@ app:
   mode: "debug"
   admin_username: "admin"
   admin_password: "123456"
+  # 本地上传文件的文件夹
+  upload_dir: "upload"
+  # 静态资源路由
+  static_path: "uploads"
 
 mysql:
   host: "127.0.0.1"

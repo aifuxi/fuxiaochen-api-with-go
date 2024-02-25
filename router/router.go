@@ -16,10 +16,17 @@ func NewRouter() *gin.Engine {
 
 	r.Use(ginzap.RecoveryWithZap(global.Logger, true))
 
+	r.Static("/uploads", global.Conf.AppConfig.UploadDir)
+
 	adminAPIV1 := r.Group("/admin-api/v1")
 	authRouter := adminAPIV1.Group("/auth")
 	{
 		authRouter.POST("/login", controller.Login)
+	}
+
+	adminUploadRouter := adminAPIV1.Group("/upload", middleware.AuthMiddleware())
+	{
+		adminUploadRouter.POST("", controller.Upload)
 	}
 
 	adminUserRouter := adminAPIV1.Group("/users", middleware.AuthMiddleware())

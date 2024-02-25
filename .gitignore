@@ -28,3 +28,5 @@ config/prod.yaml
 log/*.log
 
 .DS_Store
+
+upload
