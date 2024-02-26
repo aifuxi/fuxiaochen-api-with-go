@@ -35,7 +35,7 @@ func Upload(c *gin.Context) {
 
 	ResponseSuccess(c, gin.H{
 		"url": fmt.Sprintf(
-			"%s:%d/%s/%s",
+			"http://%s:%d/%s/%s",
 			global.Conf.AppConfig.Host,
 			global.Conf.AppConfig.Port,
 			global.Conf.AppConfig.StaticPath, filename),
