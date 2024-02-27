@@ -33,3 +33,10 @@ func GetPostsScope(params param.ParamsGetPosts) func(db *gorm.DB) *gorm.DB {
 		return db
 	}
 }
+
+func GetPublishedPostsScope(db *gorm.DB) *gorm.DB {
+
+	db = db.Where("type = ?", 1)
+
+	return db
+}

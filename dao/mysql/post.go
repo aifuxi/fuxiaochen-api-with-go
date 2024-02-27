@@ -72,8 +72,20 @@ func GetPosts(params param.ParamsGetPosts) (posts []model.Post, total int64, err
 	return posts, total, result.Error
 }
 
+func GetPublishedPostsForSite() (posts []model.Post, total int64, err error) {
+	result := global.DB.Scopes(scope.GetPublishedPostsScope).Preload(model.TagsRetrieveKey).Find(&posts).Scopes(scope.CountScope).Count(&total)
+
+	return posts, total, result.Error
+}
+
 func GetPostByID(id int64) (post model.Post, err error) {
 	result := global.DB.Preload(model.TagsRetrieveKey).First(&post, id)
+
+	return post, result.Error
+}
+
+func GetPublishedPostByIDForSite(id int64) (post model.Post, err error) {
+	result := global.DB.Scopes(scope.GetPublishedPostsScope).Preload(model.TagsRetrieveKey).First(&post, id)
 
 	return post, result.Error
 }

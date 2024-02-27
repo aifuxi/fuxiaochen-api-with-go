@@ -25,3 +25,11 @@ func DeletePostByID(id int64) (post model.Post, err error) {
 func UpdatePostByID(id int64, params param.ParamsUpdatePost) (post model.Post, err error) {
 	return mysql.UpdatePostByID(id, params)
 }
+
+func GetPublishedPostsForSite() (posts []model.Post, total int64, err error) {
+	return mysql.GetPublishedPostsForSite()
+}
+
+func GetPublishedPostByIDForSite(id int64) (post model.Post, err error) {
+	return mysql.GetPostByID(id)
+}

@@ -65,5 +65,12 @@ func NewRouter() *gin.Engine {
 		adminCategoryRouter.DELETE(":id", controller.DeleteCategory)
 	}
 
+	siteAPIV1 := r.Group("/site-api/v1")
+	sitePostRouter := siteAPIV1.Group("/posts")
+	{
+		sitePostRouter.GET("", controller.GetPublishedPostsForSite)
+		sitePostRouter.GET(":id", controller.GetPublishedPostByIDForSite)
+	}
+
 	return r
 }

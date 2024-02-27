@@ -107,3 +107,34 @@ func DeletePost(c *gin.Context) {
 
 	ResponseSuccess(c, post)
 }
+
+func GetPublishedPostsForSite(c *gin.Context) {
+	var posts []model.Post
+	var total int64
+	var err error
+
+	if posts, total, err = logic.GetPublishedPostsForSite(); err != nil {
+		ResponseError(c, CodeInternalServerError, err)
+		return
+	}
+
+	ResponseSuccessWithTotal(c, posts, total)
+}
+
+func GetPublishedPostByIDForSite(c *gin.Context) {
+	var id int64
+	var post model.Post
+	var err error
+
+	if id, err = GetIDFromParam(c); err != nil {
+		ResponseError(c, CodeIncorrectIDParams, err)
+		return
+	}
+
+	if post, err = logic.GetPublishedPostByIDForSite(id); err != nil {
+		ResponseError(c, CodeInternalServerError, err)
+		return
+	}
+
+	ResponseSuccess(c, post)
+}
