@@ -30,6 +30,6 @@ func GetPublishedPostsForSite() (posts []model.Post, total int64, err error) {
 	return mysql.GetPublishedPostsForSite()
 }
 
-func GetPublishedPostByIDForSite(id int64) (post model.Post, err error) {
-	return mysql.GetPostByID(id)
+func GetPublishedPostBySlugForSite(slug string) (post model.Post, err error) {
+	return mysql.GetPublishedPostBySlugForSite(slug)
 }

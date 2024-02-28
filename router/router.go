@@ -69,7 +69,7 @@ func NewRouter() *gin.Engine {
 	sitePostRouter := siteAPIV1.Group("/posts")
 	{
 		sitePostRouter.GET("", controller.GetPublishedPostsForSite)
-		sitePostRouter.GET(":id", controller.GetPublishedPostByIDForSite)
+		sitePostRouter.GET(":slug", controller.GetPublishedPostBySlugForSite)
 	}
 
 	return r

@@ -84,8 +84,8 @@ func GetPostByID(id int64) (post model.Post, err error) {
 	return post, result.Error
 }
 
-func GetPublishedPostByIDForSite(id int64) (post model.Post, err error) {
-	result := global.DB.Scopes(scope.GetPublishedPostsScope).Preload(model.TagsRetrieveKey).First(&post, id)
+func GetPublishedPostBySlugForSite(slug string) (post model.Post, err error) {
+	result := global.DB.Scopes(scope.GetPublishedPostsScope).Preload(model.TagsRetrieveKey).First(&post, "slug = ?", slug)
 
 	return post, result.Error
 }

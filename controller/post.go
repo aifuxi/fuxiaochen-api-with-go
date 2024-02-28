@@ -4,6 +4,7 @@ import (
 	"fuxiaochen-api-with-go/logic"
 	"fuxiaochen-api-with-go/model"
 	"fuxiaochen-api-with-go/model/param"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -121,17 +122,13 @@ func GetPublishedPostsForSite(c *gin.Context) {
 	ResponseSuccessWithTotal(c, posts, total)
 }
 
-func GetPublishedPostByIDForSite(c *gin.Context) {
-	var id int64
+func GetPublishedPostBySlugForSite(c *gin.Context) {
 	var post model.Post
 	var err error
 
-	if id, err = GetIDFromParam(c); err != nil {
-		ResponseError(c, CodeIncorrectIDParams, err)
-		return
-	}
+	slug := c.Param("slug")
 
-	if post, err = logic.GetPublishedPostByIDForSite(id); err != nil {
+	if post, err = logic.GetPublishedPostBySlugForSite(slug); err != nil {
 		ResponseError(c, CodeInternalServerError, err)
 		return
 	}
